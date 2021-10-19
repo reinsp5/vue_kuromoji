@@ -7,7 +7,7 @@
         <th>品詞</th>
         <th>活用</th>
       </tr>
-      <tr v-for="element in output" :key="element.word_id">
+      <tr v-for="element in output" :key="element">
         <td>{{ element.surface_form }}</td>
         <td>{{ element.pos }}</td>
         <td>{{ element.pos_detail_1 }}</td>
@@ -30,14 +30,13 @@ export default defineComponent({
     }
   },
   methods: {
-    async analyze(){
-      console.log("start.");
-      await this.kuromoji.build((err, tokenizer) => {
+    analyze(){
+      this.kuromoji.build((err, tokenizer) => {
         const path = tokenizer.tokenize(this.inputText);
-        console.log(path);
-        this.output = path;
+        this.output = path.filter(function(value){
+          return value.pos != "助詞" && value.pos != "記号"; // 記号と助詞は不要
+        });
       });
-      console.log("end.");
     }
   }
 });
